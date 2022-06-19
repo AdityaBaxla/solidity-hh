@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-waffle")
 require("dotenv").config()
 require("@nomiclabs/hardhat-etherscan")
+require("./tasks/block-number")
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -31,7 +32,7 @@ module.exports = {
             chainId: 4,
         },
     },
-    solidity: "0.8.7",
+    solidity: "0.8.8",
     etherscan: {
         apiKey: ETHERSCAN_API_KEY,
     },

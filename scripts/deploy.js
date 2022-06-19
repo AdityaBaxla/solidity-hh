@@ -18,14 +18,20 @@ const main = async () => {
     //if the network is local dont run and if it is public network then run verify function
     console.log(network.config)
     if (network.config.chainId === 4 && process.env.ETHERSCAN_API_KEY) {
+        console.log("waiting for 5 block tx...")
         await SimpleStorage.deployTransaction.wait(6)
         await verify(SimpleStorage.address)
     }
 
     //interact with the blockchain
     const currentValue = await SimpleStorage.retrieve()
+    console.log(`Current Value is ${currentValue}`)
+
+    //update current value
+    const transactionResponse = await SimpleStorage.store(7)
     await transactionResponse.wait(1)
-    const updatedValue = await SimpleStorage.ret
+    const updatedValue = await SimpleStorage.retrieve()
+    console.log(`Updated Value is ${updatedValue}`)
 }
 
 async function verify(contractAddress, args) {
