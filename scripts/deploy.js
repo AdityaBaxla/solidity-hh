@@ -1,5 +1,5 @@
 //imports
-const { ethers } = require("hardhat")
+const { ethers, run, network } = require("hardhat")
 
 //asycn main()
 const main = async () => {
@@ -9,11 +9,44 @@ const main = async () => {
 
     console.log("Deploying...")
     const SimpleStorage = await SimpleStorageFactory.deploy()
-    console.log(`Deploying contract to \n`)
+    console.log(`Deploying contract to \n\n${SimpleStorage.address}`)
     //anytime we deploy without specifiing the wallet/sighner and network hardhat uses its default hardhat network
     //comes with
     //rpc url
     //private key
+
+    //if the network is local dont run and if it is public network then run verify function
+    console.log(network.config)
+    if (network.config.chainId === 4 && process.env.ETHERSCAN_API_KEY) {
+        await SimpleStorage.deployTransaction.wait(6)
+        await verify(SimpleStorage.address)
+    }
+
+    //interact with the blockchain
+    const currentValue = await SimpleStorage.retrieve()
+    await transactionResponse.wait(1)
+    const updatedValue = await SimpleStorage.ret
+}
+
+async function verify(contractAddress, args) {
+    //args : arguments for contract (when they have constructor)
+    try {
+        await run("verify:verify", {
+            address: contractAddress,
+            constructorArguments: args,
+        })
+    } catch (e) {
+        if (e.message.toLowerCase().includes("already verified")) {
+            console.log("already verified")
+        } else {
+            console.log(e)
+        }
+    }
 }
 //call main
 main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.error(error)
+        process.exit(1)
+    })
